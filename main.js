@@ -1,4 +1,9 @@
 window.addEventListener('load', async function () {
+  // const canvas = document.querySelector('#canvas');
+  // canvas.width = 800;
+  // canvas.height = 600;
+  // canvas.getContext('2d');
+
   const BASE_URL = 'https://dragonball-api.com/api';
   let characters = [];
   let characterSelected = [];
