@@ -8,6 +8,13 @@ window.addEventListener('load', async function () {
   let characters = [];
   let characterSelected = [];
 
+  if (window.localStorage) {
+    const res = localStorage.getItem('characters');
+    if (res) {
+      characterSelected = JSON.parse(res);
+    }
+  }
+
   const INPUT_SEARCH = document.querySelector('#search');
   INPUT_SEARCH.addEventListener('input', function (event) {
     const value = event.target.value;
@@ -31,24 +38,29 @@ window.addEventListener('load', async function () {
       const div = document.createElement('div');
       div.setAttribute('class', 'card');
       div.addEventListener('click', function () {
-        characterSelected.push(item.name.toLowerCase());
+        const nameCharacter = item.name.toLowerCase();
+        if (window.localStorage) {
+          const res = localStorage.getItem('characters');
+          if (res) {
+            characterSelected = JSON.parse(res);
+            const existe = characterSelected.includes(nameCharacter);
+            if (existe) {
+              characterSelected = characterSelected.filter(item => {
+                return item !== nameCharacter.toLowerCase();
+              });
+            } else {
+              characterSelected.push(nameCharacter);
+            }
+          }
+        }
+
         characterSelected = [...new Set(characterSelected)];
 
         if (window.localStorage) {
           localStorage.setItem('characters', JSON.stringify(characterSelected));
         }
-      });
-  
-      div.addEventListener('dblclick', function () {
-        const { name } = item;
-        characterSelected = characterSelected.filter(nameCharacter => {
-          return nameCharacter !== name.toLowerCase();
-        });
 
-        if (window.localStorage) {
-          const res = localStorage.getItem('characters', characterSelected);
-          console.log(JSON.parse(res));
-        }
+        window.location.reload();
       });
 
       const img = document.createElement('img');
@@ -58,7 +70,11 @@ window.addEventListener('load', async function () {
 
       const h2 = document.createElement('h2');
       h2.textContent = item.name;
+      // console.log('-----------------en el momento del renderizado-------------------');
+      // console.log(characterSelected.includes(item.name.toLowerCase()), item.name.toLowerCase());
+      // console.log('------------------------------------');
       h2.setAttribute('class', 'card-title');
+      h2.style.color = characterSelected.includes(item.name.toLowerCase()) ? 'red' : 'black';
 
       const p = document.createElement('p');
       p.textContent = item.description;
